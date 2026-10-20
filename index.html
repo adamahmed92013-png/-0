@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الكارفين'• CLAN - لوحة المؤسس والتحكم المركزية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=VT323&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #030712;
+            --sidebar-bg: #0b0f19;
+            --card-bg: #111827;
+            --accent-color: #10b981;
+            --hacker-glow: #06b6d4;
+            --founder-gold: #f59e0b;
+            --text-color: #f9fafb;
+            --text-muted: #9ca3af;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --border-color: #1f2937;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); display: flex; min-height: 100vh; overflow-x: hidden; }
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        #globalLockScreen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, rgba(3,7,18,0.98) 0%, rgba(0,0,0,0.99) 100%);
+            z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px;
+        }
+        .lock-box {
+            background-color: var(--card-bg); border: 2px solid var(--accent-color); border-radius: 20px; padding: 30px; max-width: 500px; width: 100%; box-shadow: 0 0 40px rgba(16,185,129,0.3);
+        }
+        .lock-box i { font-size: 50px; margin-bottom: 15px; color: var(--accent-color); }
+        .lock-box h2 { font-size: 22px; margin-bottom: 10px; font-weight: 900; color: var(--accent-color); }
+        .lock-box p { color: var(--text-muted); font-size: 14px; margin-bottom: 15px; }
+        
+        .btn-emergency-unlock {
+            background: linear-gradient(135deg, var(--accent-color), #059669); color: #fff; border: none; padding: 10px 20px; border-radius: 9px; font-size: 13px; font-weight: 800; cursor: pointer;
+        }
+
+        aside {
+            width: 280px; background-color: var(--sidebar-bg); border-left: 1px solid var(--border-color); display: flex; flex-direction: column; position: fixed; top: 0; bottom: 0; right: 0; z-index: 100; transition: var(--transition);
+        }
+        .sidebar-brand { padding: 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-color); }
+        .sidebar-brand-info { display: flex; align-items: center; gap: 12px; }
+        .sidebar-brand img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-color); }
+        .sidebar-brand h2 { font-size: 16px; font-weight: 900; color: var(--accent-color); }
+        .close-sidebar-btn { background: none; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer; display: none; }
+
+        .sidebar-menu { padding: 20px 10px; flex: 1; }
+        .menu-category { font-size: 11px; color: var(--text-muted); margin: 15px 10px 10px; font-weight: 700; text-transform: uppercase; }
+        .sidebar-menu li a {
+            display: flex; align-items: center; gap: 15px; padding: 12px 15px; border-radius: 10px; color: var(--text-muted); font-size: 14px; font-weight: 600; transition: var(--transition); margin-bottom: 6px; cursor: pointer;
+        }
+        .sidebar-menu li.active a, .sidebar-menu li a:hover {
+            background: linear-gradient(135deg, var(--accent-color), #059669); color: #fff; transform: translateX(-5px);
+        }
+        .sidebar-menu li a i { font-size: 18px; width: 25px; text-align: center; }
+
+        .main-content { flex: 1; margin-right: 280px; display: flex; flex-direction: column; min-height: 100vh; }
+        header {
+            height: 75px; background-color: var(--sidebar-bg); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 25px; position: sticky; top: 0; z-index: 99; gap: 15px;
+        }
+        .header-right-tools { display: flex; align-items: center; gap: 12px; flex: 1; flex-wrap: wrap; }
+        .menu-toggle-btn { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-color); width: 42px; height: 42px; border-radius: 10px; font-size: 18px; cursor: pointer; display: none; align-items: center; justify-content: center; }
+        .header-search { display: flex; align-items: center; background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 10px; padding: 8px 15px; width: 100%; max-width: 220px; gap: 10px; }
+        .header-search input { background: none; border: none; color: var(--text-color); outline: none; width: 100%; font-size: 13px; }
+
+        .btn-vip-control, .btn-hacker-panel, .btn-stats-panel {
+            color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+        }
+        .btn-vip-control { background: linear-gradient(135deg, var(--warning-color), #d97706); }
+        .btn-hacker-panel { background: linear-gradient(135deg, var(--hacker-glow), #0284c7); display: none; font-family: 'VT323', monospace; font-size: 16px; }
+        .btn-stats-panel { background: linear-gradient(135deg, var(--accent-color), #059669); }
+
+        .user-profile { display: flex; align-items: center; gap: 10px; }
+        .user-profile img { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-color); }
+        .user-info h4 { font-size: 13px; font-weight: 700; color: var(--text-color); }
+
+        .container { padding: 25px; flex: 1; }
+        .content-section { display: none; }
+        .content-section.active-section { display: block; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .stat-card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 14px; padding: 20px; display: flex; align-items: center; justify-content: space-between; }
+        .stat-info h3 { font-size: 12px; color: var(--text-muted); margin-bottom: 5px; font-weight: 600; }
+        .stat-info .number { font-size: 22px; font-weight: 900; color: var(--accent-color); }
+        .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .stat-icon.boss { background: rgba(245, 158, 11, 0.15); color: var(--founder-gold); }
+        .stat-icon.leader { background: rgba(245, 158, 11, 0.15); color: var(--warning-color); }
+        .stat-icon.coleader { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+        .stat-icon.member { background: rgba(16, 185, 129, 0.15); color: var(--success-color); }
+
+        .card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 14px; padding: 20px; margin-bottom: 25px; }
+        .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
+        .card-header h3 { font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+
+        .table-responsive { overflow-x: auto; width: 100%; }
+        table { width: 100%; border-collapse: collapse; text-align: right; min-width: 600px; }
+        th, td { padding: 12px 12px; border-bottom: 1px solid var(--border-color); font-size: 13px; }
+        th { color: var(--text-muted); background-color: rgba(255, 255, 255, 0.01); font-weight: 700; }
+
+        .rank-badge { padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; }
+        .rank-badge.founder { background: rgba(245, 158, 11, 0.2); color: var(--founder-gold); border: 1px solid var(--founder-gold); }
+        .rank-badge.boss { background: rgba(236, 72, 153, 0.15); color: #ec4899; border: 1px solid rgba(236, 72, 153, 0.3); }
+        .rank-badge.leader { background: rgba(245, 158, 11, 0.15); color: var(--warning-color); border: 1px solid rgba(245, 158, 11, 0.3); }
+        .rank-badge.coleader { background: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .rank-badge.member { background: rgba(16, 185, 129, 0.15); color: var(--success-color); border: 1px solid rgba(16, 185, 129, 0.3); }
+
+        .action-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+        .btn-action-edit, .btn-action-ban, .btn-action-delete {
+            padding: 5px 10px; border-radius: 7px; cursor: pointer; font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; border: 1px solid transparent;
+        }
+        .btn-action-edit { background: rgba(59, 130, 246, 0.15); color: #3b82f6; border-color: rgba(59, 130, 246, 0.3); }
+        .btn-action-ban { background: rgba(245, 158, 11, 0.15); color: var(--warning-color); border-color: rgba(245, 158, 11, 0.3); }
+        .btn-action-delete { background: rgba(239, 68, 68, 0.15); color: var(--danger-color); border-color: rgba(239, 68, 68, 0.3); }
+
+        .btn-bulk-delete { background: rgba(239, 68, 68, 0.15); color: var(--danger-color); border: 1px solid rgba(239, 68, 68, 0.4); padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
+
+        .select-col { display: none; width: 40px; text-align: center; }
+
+        .form-container { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 14px; padding: 20px; margin-top: 20px; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group label { font-size: 12px; color: var(--text-muted); font-weight: 700; }
+        .form-group input, .form-group select {
+            background-color: var(--bg-color); border: 1px solid var(--border-color); padding: 11px 14px; border-radius: 9px; color: var(--text-color); outline: none; font-size: 13px;
+        }
+
+        .btn-submit { margin-top: 15px; background: linear-gradient(135deg, var(--accent-color), #059669); color: #fff; border: none; padding: 12px 20px; border-radius: 9px; font-size: 14px; font-weight: 800; cursor: pointer; width: 100%; }
+
+        .hacker-terminal { background: #000; border: 2px solid var(--hacker-glow); border-radius: 14px; padding: 20px; font-family: 'VT323', monospace; box-shadow: 0 0 30px rgba(6,182,212,0.2); margin-bottom: 25px; }
+        .hacker-terminal h2 { color: var(--hacker-glow); font-size: 26px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .terminal-screen { background: rgba(3,7,18,0.9); border: 1px solid #1e293b; padding: 15px; border-radius: 8px; color: #34d399; font-size: 17px; max-height: 200px; overflow-y: auto; margin-bottom: 15px; }
+        
+        .hacker-btn {
+            background: rgba(6,182,212,0.15); color: var(--hacker-glow); border: 1px solid var(--hacker-glow); padding: 10px 16px; border-radius: 8px; cursor: pointer; font-family: 'VT323', monospace; font-size: 18px; display: inline-flex; align-items: center; gap: 8px;
+        }
+
+        .rules-card { background: linear-gradient(145deg, #111827, #0b0f19); border: 1px solid var(--accent-color); border-radius: 16px; padding: 25px; }
+        .rule-item { display: flex; align-items: flex-start; gap: 15px; padding: 14px 0; border-bottom: 1px dashed var(--border-color); }
+        .rule-num { background: rgba(16,185,129,0.15); color: var(--accent-color); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; border: 1px solid rgba(16,185,129,0.3); }
+        .rule-content h4 { font-size: 15px; font-weight: 800; color: #fff; margin-bottom: 3px; }
+        .rule-content p { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+
+        .chat-box-wrapper { display: flex; flex-direction: column; height: 500px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 14px; overflow: hidden; }
+        .chat-messages-area { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: rgba(3, 7, 18, 0.4); }
+        .chat-message-item { background: var(--sidebar-bg); border: 1px solid var(--border-color); padding: 10px 15px; border-radius: 10px; max-width: 75%; position: relative; }
+        .chat-message-item.my-message { align-self: flex-end; background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.3); }
+        .chat-msg-header { display: flex; justify-content: space-between; gap: 15px; margin-bottom: 4px; font-size: 11px; color: var(--text-muted); }
+        .chat-msg-author { font-weight: 800; color: var(--accent-color); }
+        .chat-msg-text { font-size: 13px; color: var(--text-color); word-break: break-word; }
+        
+        .chat-msg-delete-btn {
+            position: absolute; top: 5px; left: 8px; color: var(--danger-color); cursor: pointer; font-size: 11px; display: none; opacity: 0.7;
+        }
+        .chat-message-item:hover .chat-msg-delete-btn { display: block; }
+        .chat-msg-delete-btn:hover { opacity: 1; }
+
+        .emoji-bar { display: flex; gap: 8px; padding: 8px 15px; background: rgba(11,15,25,0.8); border-top: 1px solid var(--border-color); }
+        .emoji-item { font-size: 18px; cursor: pointer; transition: transform 0.2s; }
+        .emoji-item:hover { transform: scale(1.3); }
+
+        .chat-input-area { padding: 10px 15px 15px; background: var(--sidebar-bg); border-top: 1px solid var(--border-color); display: flex; gap: 10px; }
+        .chat-input-area input { flex: 1; background: var(--bg-color); border: 1px solid var(--border-color); padding: 10px 15px; border-radius: 9px; color: var(--text-color); outline: none; font-size: 13px; }
+        .chat-send-btn { background: linear-gradient(135deg, var(--accent-color), #059669); color: #fff; border: none; padding: 0 20px; border-radius: 9px; font-weight: 700; cursor: pointer; }
+
+        #notificationToast {
+            position: fixed; bottom: 25px; left: 25px; background: linear-gradient(135deg, #1e293b, #030712); border: 2px solid var(--accent-color); border-radius: 14px; padding: 15px 22px; z-index: 99999; display: none; align-items: center; gap: 15px;
+        }
+
+        footer { text-align: center; padding: 15px; color: var(--text-muted); font-size: 12px; border-top: 1px solid var(--border-color); background-color: var(--sidebar-bg); margin-top: auto; }
+        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); z-index: 95; display: none; backdrop-filter: blur(2px); }
+
+        @media (max-width: 992px) {
+            aside { right: -280px; }
+            aside.mobile-open { right: 0; }
+            .main-content { margin-right: 0 !important; }
+            .menu-toggle-btn { display: flex; }
+            .close-sidebar-btn { display: block; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileSidebar()"></div>
+
+    <div id="globalLockScreen">
+        <div class="lock-box">
+            <i class="fa-solid fa-lock"></i>
+            <h2>تنبيه صيانة / إغلاق شامل</h2>
+            <p>تم إغلاق التطبيق مؤقتاً لجميع الأعضاء بواسطة الإدارة العليا.</p>
+            <button class="btn-emergency-unlock" onclick="emergencyUnlockApp()"><i class="fa-solid fa-key"></i> فتح الطوارئ (للمؤسس أدم)</button>
+        </div>
+    </div>
+
+    <div id="notificationToast">
+        <i class="fa-solid fa-shield-halved"></i>
+        <div class="toast-content">
+            <h4 id="toastTitle">تنبيه نظام</h4>
+            <p id="toastDesc">حدث إجراء هام في الكلان.</p>
+        </div>
+    </div>
+
+    <aside id="appSidebar">
+        <div class="sidebar-brand">
+            <div class="sidebar-brand-info">
+                <img src="https://tse4.mm.bing.net/th/id/OIP.pw_r5qw2tByrVa7mSHJ6tQHaNK?r=0&rs=1&pid=ImgDetMain&o=7&rm=3">
+                <h2>الكارفين• CLAN</h2>
+            </div>
+            <button class="close-sidebar-btn" onclick="toggleMobileSidebar()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <ul class="sidebar-menu">
+            <div class="menu-category">أقسام الكلان الأساسية</div>
+            <li id="menu-members" class="active"><a onclick="switchSection('members', this)"><i class="fa-solid fa-users"></i><span>الأعضاء المسجلين</span></a></li>
+            <li id="menu-rules"><a onclick="switchSection('rules', this)"><i class="fa-solid fa-book-skull"></i><span>قواعد الكلان 📜</span></a></li>
+            <li id="menu-chat"><a onclick="switchSection('chat', this)"><i class="fa-solid fa-comments"></i><span>شات فقت 💬</span></a></li>
+            <li id="menu-tournaments"><a onclick="switchSection('tournaments', this)"><i class="fa-solid fa-trophy"></i><span>غرفة البطولات 🏆</span></a></li>
+            <div class="menu-category">أقسام الإدارة المحمية</div>
+            <li id="menu-hacker"><a onclick="verifyHackerSection('hacker', this)"><i class="fa-solid fa-terminal"></i><span>لوحة المؤسس (أدم) 💻</span></a></li>
+            <li id="menu-home"><a onclick="verifySidebarSection('home', this)"><i class="fa-solid fa-crown"></i><span>رئيسية الكلان 🔒</span></a></li>
+            <li id="menu-leaders"><a onclick="verifySidebarSection('leaders', this)"><i class="fa-solid fa-user-shield"></i><span>الزعماء والقادة 🔒</span></a></li>
+        </ul>
+    </aside>
+
+    <div class="main-content">
+        <header>
+            <div class="header-right-tools">
+                <button class="menu-toggle-btn" onclick="toggleMobileSidebar()"><i class="fa-solid fa-bars"></i></button>
+                <button class="btn-vip-control" onclick="toggleGlobalAppLock()"><i class="fa-solid fa-crown"></i><span>قفل شامل</span></button>
+                <button class="btn-hacker-panel" id="hackerNavBtn" style="display: none;" onclick="switchSection('hacker', null)"><i class="fa-solid fa-terminal"></i><span>[ FOUNDER_MODE ]</span></button>
+                <button class="btn-stats-panel" onclick="openStatsConfigModal()"><i class="fa-solid fa-sliders"></i><span>الإحصائيات ( 🔒 )</span></button>
+
+                <div class="header-search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="searchInput" placeholder="ابحث...">
+                </div>
+            </div>
+            <div class="user-profile">
+                <img src="https://tse4.mm.bing.net/th/id/OIP.pw_r5qw2tByrVa7mSHJ6tQHaNK?r=0&rs=1&pid=ImgDetMain&o=7&rm=3">
+                <div class="user-info">
+                    <h4 id="currentLoggedInUserLabel">أنت مسجل كـ: زائر</h4>
+                </div>
+            </div>
+        </header>
+
+        <div class="container">
+            
+            <!-- قسم الأعضاء المسجلين -->
+            <div id="section-members" class="content-section active-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-users-line" style="color: var(--accent-color);"></i> سجل أعضاء MONSTER'• CLAN المعتمدين</h3>
+                        <button class="btn-bulk-delete" onclick="triggerBulkDelete()"><i class="fa-solid fa-trash-can"></i> حذف الأعضاء (🔒)</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="select-col" id="selectAllHeader"><input type="checkbox" id="selectAllCheckbox" onclick="toggleSelectAll(this)" style="cursor: pointer;"></th>
+                                    <th>الاسم / اللقب</th>
+                                    <th>الرتبة</th>
+                                    <th>التاريخ</th>
+                                    <th>الحالة</th>
+                                    <th>إجراءات الأدمن</th>
+                                </tr>
+                            </thead>
+                            <tbody id="membersTableBody">
+                                <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">لا يوجد أعضاء مسجلين حالياً.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="form-container" id="registerFormContainer">
+                    <h3 style="margin-bottom: 10px; font-size: 16px;"><i class="fa-solid fa-user-plus" style="color: var(--accent-color);"></i> تسجيل الدخول / إنشاء حساب عضو</h3>
+                    <form id="addMemberForm" onsubmit="registerMember(event)">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>الاسم أو اللقب</label>
+                                <input type="text" id="mName" placeholder="أدخل اسمك أو لقبك" required>
+                            </div>
+                            <div class="form-group">
+                                <label>رتبة العضو</label>
+                                <select id="mRank" onchange="handleRankChange(this)">
+                                    <option value="keep_old">-- الاحتفاظ بالرتبة القديمة للحساب --</option>
+                                    <option value="عضو">عضو (بدون كلمة سر)</option>
+                                    <option value="نائب قائد">نائب قائد (يتطلب كلمة سر)</option>
+                                    <option value="قائد">قائد (يتطلب كلمة سر)</option>
+                                    <option value="زعيم">زعيم (يتطلب كلمة سر)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>كلمة السر للحساب (للقادة والزعماء فقط)</label>
+                                <input type="password" id="mPassword" placeholder="كلمة السر مطلوب تعيينها للرتب العليا">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-submit"><i class="fa-solid fa-right-to-bracket"></i> دخول / إنشاء الحساب سحابياً</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- قسم قواعد الكلان المنفصل -->
+            <div id="section-rules" class="content-section">
+                <div class="rules-card">
+                    <div class="card-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 20px;">
+                        <h3 style="color: var(--accent-color); font-size: 20px;"><i class="fa-solid fa-scroll"></i> القوانين والتعليمات الرسمية لكلان الكارفين</h3>
+                    </div>
+                    <div class="rule-item">
+                        <div class="rule-num">1</div>
+                        <div class="rule-content">
+                            <h4>الاحترام المتبادل</h4>
+                            <p>يجب على جميع الأعضاء احترام بعضهم البعض داخل الشات والفعاليات، ويُمنع منعاً باتاً أي تجاوز.</p>
+                        </div>
+                    </div>
+                    <div class="rule-item">
+                        <div class="rule-num">2</div>
+                        <div class="rule-content">
+                            <h4>النشاط المستمر</h4>
+                            <p>يُتوقع من الأعضاء التواجد والمشاركة الفعالة في البطولات والتدريبات الجماعية.</p>
+                        </div>
+                    </div>
+                    <div class="rule-item">
+                        <div class="rule-num">3</div>
+                        <div class="rule-content">
+                            <h4>حماية بيانات الحسابات</h4>
+                            <p>كلمات السر مخصصة فقط للرتب القيادية (الزعماء، القادة، نواب القادة)، وتمنع مشاركتها لتجنب خرق الحساب.</p>
+                        </div>
+                    </div>
+                    <div class="rule-item">
+                        <div class="rule-num">4</div>
+                        <div class="rule-content">
+                            <h4>توجيهات القيادة والمؤسس</h4>
+                            <p>الالتزام الكامل بأوامر المؤسس والقادة أثناء البطولات والمباريات الرسمية.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- لوحة الهكر الخاصة بالمهنة الخفية للمؤسس أدم -->
+            <div id="section-hacker" class="content-section">
+                <div class="hacker-terminal">
+                    <h2><i class="fa-solid fa-terminal"></i> SYSTEM_ROOT // FOUNDER: ADAM [ HACKER MODE ]</h2>
+                    <div class="terminal-screen" id="hackerLogScreen">
+                        > تم تفعيل المهنة الخفية [ المؤسس ⚡ ] بنجاح...<br>
+                        > أهلاً بك يا أدم. النظام الموحد يعمل الآن لمنع تكرار أي سجل حساب من أي جهاز.<br>
+                        > جاهز لإصدار الأوامر والتحكم الكامل بالصلاحيات وسرقة/عرض كلمات سر الأعضاء...
+                    </div>
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                        <button class="hacker-btn" onclick="hackerViewPasswords()"><i class="fa-solid fa-key"></i> [ SNOOP_PASSWORDS ] عرض باسوردات الأعضاء</button>
+                        <button class="hacker-btn" onclick="hackerGiveImmunityPrompt()"><i class="fa-solid fa-shield-halved"></i> منح حصانة كاملة لعضو</button>
+                        <button class="hacker-btn" onclick="hackerQuickAccountGenerator()"><i class="fa-solid fa-user-gear"></i> صانع الحسابات السريع</button>
+                        <button class="hacker-btn" style="border-color: var(--danger-color); color: var(--danger-color);" onclick="hackerWipeDatabase()"><i class="fa-solid fa-triangle-exclamation"></i> تصفير شامل للنظام</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- شات فقت -->
+            <div id="section-chat" class="content-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-comments" style="color: var(--accent-color);"></i> شات فقت (دردشة أعضاء الكلان الفورية) 💬</h3>
+                    </div>
+                    <div class="chat-box-wrapper">
+                        <div class="chat-messages-area" id="chatMessagesContainer">
+                            <div style="text-align: center; color: var(--text-muted); margin: auto;">لا توجد رسائل في الشات بعد. كن أول المتحدثين!</div>
+                        </div>
+                        <div class="emoji-bar">
+                            <span class="emoji-item" onclick="insertEmoji('🔥')">🔥</span>
+                            <span class="emoji-item" onclick="insertEmoji('👑')">👑</span>
+                            <span class="emoji-item" onclick="insertEmoji('💬')">💬</span>
+                            <span class="emoji-item" onclick="insertEmoji('🏆')">🏆</span>
+                            <span class="emoji-item" onclick="insertEmoji('⚡')">⚡</span>
+                            <span class="emoji-item" onclick="insertEmoji('🎯')">🎯</span>
+                            <span class="emoji-item" onclick="insertEmoji('👍')">👍</span>
+                            <span class="emoji-item" onclick="insertEmoji('❤️')">❤️</span>
+                        </div>
+                        <div class="chat-input-area">
+                            <input type="text" id="chatInputMessage" placeholder="اكتب رسالتك هنا..." onkeypress="handleChatKeyPress(event)">
+                            <button class="chat-send-btn" onclick="sendChatMessage()"><i class="fa-solid fa-paper-plane"></i> إرسال</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- البطولات -->
+            <div id="section-tournaments" class="content-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-trophy" style="color: var(--warning-color);"></i> نشر البطولات الرسمية 🔒</h3>
+                    </div>
+                    <form id="tournamentForm" onsubmit="addTournament(event)">
+                        <div class="form-grid" style="margin-bottom: 15px;">
+                            <div class="form-group">
+                                <label>اسم البطولة</label>
+                                <input type="text" id="tName" placeholder="مثال: بطولة Free Fire الكبرى" required>
+                            </div>
+                            <div class="form-group">
+                                <label>الموعد والنظام</label>
+                                <input type="text" id="tTime" placeholder="مثال: غداً الساعة 9 مساءً" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-submit"><i class="fa-solid fa-bullhorn"></i> نشر البطولة سحابياً الآن</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-gamepad" style="color: #3b82f6;"></i> البطولات النشطة حالياً</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                           <thead>
+                                <tr>
+                                    <th>اسم البطولة</th>
+                                    <th>الموعد</th>
+                                    <th>بواسطة</th>
+                                    <th>إجراء</th>
+                                </tr>
+                           </thead>
+                           <tbody id="tournamentsTableBody">
+                               <tr><td colspan="4" style="text-align: center; color: var(--text-muted);">لا توجد بطولات منشورة حالياً.</td></tr>
+                           </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- رئيسية الكلان -->
+            <div id="section-home" class="content-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>المؤسس والزعماء</h3>
+                            <div class="number" id="bossCount">0 / 4</div>
+                        </div>
+                        <div class="stat-icon boss"><i class="fa-solid fa-chess-king"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>القائد (الحد الأقصى)</h3>
+                            <div class="number" id="leaderCount">0 / 1</div>
+                        </div>
+                        <div class="stat-icon leader"><i class="fa-solid fa-crown"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>نواب القائد</h3>
+                            <div class="number" id="coleaderCount">0 / 3</div>
+                        </div>
+                        <div class="stat-icon coleader"><i class="fa-solid fa-shield-halved"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>إجمالي الأعضاء</h3>
+                            <div class="number" id="totalCount">0</div>
+                        </div>
+                        <div class="stat-icon member"><i class="fa-solid fa-users"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الزعماء والقادة -->
+            <div id="section-leaders" class="content-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-user-shield" style="color: var(--warning-color);"></i> قائمة القيادة العليا والمؤسس</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>الاسم</th>
+                                    <th>الرتبة</th>
+                                    <th>التاريخ</th>
+                                    <th>الحالة</th>
+                                    <th>إجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leadersTableBody">
+                                <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">لا يوجد قادة أو زعماء مسجلين.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <footer>
+            <p>الكارفين'• CLAN &copy; 2027 - (*°▽°*)نظام الإدارة كلان الكارفين(*°▽°*)</p>
+        </footer>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, doc, deleteDoc, updateDoc, onSnapshot, setDoc, getDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCU1GKAuaavTbwMDGMwKx72hLc7aRzH9g",
+            authDomain: "monsterclan-4f918.firebaseapp.com",
+            projectId: "monsterclan-4f918",
+            storageBucket: "monsterclan-4f918.firebasestorage.app",
+            messagingSenderId: "826999098988",
+            appId: "1:826999098988:web:19bbe3df8eee86d4df8689",
+            measurementId: "G-07VHTGTSH6"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let currentAdminPassword = localStorage.getItem('monster_admin_pwd') || '01060156611';
+        let isBulkDeleteMode = false;
+        let myDocId = localStorage.getItem('monster_my_doc_id') || '';
+        let myCurrentName = localStorage.getItem('monster_my_name') || '';
+
+        // حدود الرتب الديناميكية المسجلة
+        let maxBossesLimit = 4;
+        let maxLeadersLimit = 1;
+        let maxColeadersLimit = 3;
+
+        const founderCodeName = "adam1";
+        const founderPassword = "01060156611";
+        let customVipWhitelist = ["adam1", "أدم", "Adam"];
+        let cachedMembers = [];
+
+        function showFancyToast(title, desc) {
+            const toast = document.getElementById('notificationToast');
+            document.getElementById('toastTitle').innerText = title;
+            document.getElementById('toastDesc').innerText = desc;
+            toast.style.display = 'flex';
+            setTimeout(() => { toast.style.display = 'none'; }, 4000);
+        }
+
+        function isFounder(name) {
+            return name && (name.toLowerCase() === founderCodeName.toLowerCase() || name === "أدم" || name === "Adam");
+        }
+
+        function checkAdminAuth() {
+            if (isFounder(myCurrentName)) return true;
+            let pwd = prompt("🔐 أدخل كلمة مرور الأدمن:");
+            if (pwd === null) return false;
+
+            if (pwd === founderPassword || pwd === currentAdminPassword) {
+                return true;
+            } else {
+                alert("❌ كلمة المرور غير صحيحة!");
+                return false;
+            }
+        }
+
+        // تعديل الحدود القصوى للزعماء والقادة ونواب القائد عبر زر الإحصائيات
+        window.openStatsConfigModal = async function() {
+            if (!checkAdminAuth()) return;
+            let choice = prompt(`⚙️ تعديل إحصائيات وحدود الكلان:\n\n1. تعديل حد الزعماء (السيئة حالياً: ${maxBossesLimit})\n2. تعديل حد القادة (السيئة حالياً: ${maxLeadersLimit})\n3. تعديل حد نواب القائد (السيئة حالياً: ${maxColeadersLimit})\n\nأدخل رقم الخيار (1 أو 2 أو 3):`);
+            
+            if (choice === '1') {
+                let n = prompt("أدخل الحد الأقصى الجديد للزعماء:", maxBossesLimit);
+                if (n && !isNaN(n) && parseInt(n) >= 0) {
+                    maxBossesLimit = parseInt(n);
+                    await setDoc(doc(db, "settings", "limits"), { maxBosses: maxBossesLimit, maxLeaders: maxLeadersLimit, maxColeaders: maxColeadersLimit }, { merge: true });
+                    showFancyToast("تحديث ناجح ⚙️", `تم تعديل حد الزعماء إلى (${maxBossesLimit})`);
+                }
+            } else if (choice === '2') {
+                let n = prompt("أدخل الحد الأقصى الجديد للقادة:", maxLeadersLimit);
+                if (n && !isNaN(n) && parseInt(n) >= 0) {
+                    maxLeadersLimit = parseInt(n);
+                    await setDoc(doc(db, "settings", "limits"), { maxBosses: maxBossesLimit, maxLeaders: maxLeadersLimit, maxColeaders: maxColeadersLimit }, { merge: true });
+                    showFancyToast("تحديث ناجح ⚙️", `تم تعديل حد القادة إلى (${maxLeadersLimit})`);
+                }
+            } else if (choice === '3') {
+                let n = prompt("أدخل الحد الأقصى الجديد لنواب القائد:", maxColeadersLimit);
+                if (n && !isNaN(n) && parseInt(n) >= 0) {
+                    maxColeadersLimit = parseInt(n);
+                    await setDoc(doc(db, "settings", "limits"), { maxBosses: maxBossesLimit, maxLeaders: maxLeadersLimit, maxColeaders: maxColeadersLimit }, { merge: true });
+                    showFancyToast("تحديث ناجح ⚙️", `تم تعديل حد نواب القائد إلى (${maxColeadersLimit})`);
+                }
+            }
+        };
+
+        function listenToLimits() {
+            onSnapshot(doc(db, "settings", "limits"), (snap) => {
+                if (snap.exists()) {
+                    const data = snap.data();
+                    if (data.maxBosses !== undefined) maxBossesLimit = data.maxBosses;
+                    if (data.maxLeaders !== undefined) maxLeadersLimit = data.maxLeaders;
+                    if (data.maxColeaders !== undefined) maxColeadersLimit = data.maxColeaders;
+                    renderMemberCounts();
+                }
+            });
+        }
+
+        window.handleRankChange = function(selectEl) {
+            const pwdInput = document.getElementById('mPassword');
+            if (selectEl.value === 'عضو') {
+                pwdInput.value = '';
+                pwdInput.placeholder = "لا يمكن للأعضاء العاديين تعيين كلمة سر";
+            } else {
+                pwdInput.placeholder = "أدخل كلمة السر المطلوبة لحسابك القيادي";
+            }
+        };
+
+        function listenToSecretVipWhitelist() {
+            onSnapshot(doc(db, "settings", "vipList"), (snap) => {
+                if (snap.exists() && snap.data().whitelist) {
+                    customVipWhitelist = snap.data().whitelist;
+                }
+                renderMembersTable(cachedMembers);
+            }, (err) => { console.log(err); });
+        }
+
+        function isMemberProtected(memberName) {
+            if (!memberName) return false;
+            return isFounder(memberName) || customVipWhitelist.some(v => v.toLowerCase() === memberName.toLowerCase());
+        }
+
+        function checkAndRevealHackerButton() {
+            const btn = document.getElementById('hackerNavBtn');
+            const label = document.getElementById('currentLoggedInUserLabel');
+            if (!btn) return;
+
+            if (isFounder(myCurrentName)) {
+                btn.style.display = 'inline-flex';
+                if (label) label.innerHTML = `أنت مسجل كـ: <span style="color: var(--founder-gold); font-weight: 900;">المؤسس ⚡ (أدم)</span>`;
+            } else if (myCurrentName) {
+                btn.style.display = 'none';
+                if (label) label.innerHTML = `أنت مسجل كـ: <span style="color: var(--accent-color);">${myCurrentName}</span>`;
+            } else {
+                btn.style.display = 'none';
+            }
+        }
+
+        window.switchSection = function(sectionId, element) {
+            document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active-section'));
+            document.querySelectorAll('.sidebar-menu li').forEach(li => li.classList.remove('active'));
+
+            document.getElementById(`section-${sectionId}`).classList.add('active-section');
+            if (element) element.parentElement.classList.add('active');
+
+            if (window.innerWidth <= 992) {
+                toggleMobileSidebar();
+            }
+        };
+
+        window.verifySidebarSection = function(sectionId, element) {
+            if (checkAdminAuth()) {
+                window.switchSection(sectionId, element);
+            }
+        };
+
+        window.verifyHackerSection = function(sectionId, element) {
+            if (isFounder(myCurrentName)) {
+                window.switchSection(sectionId, element);
+                showFancyToast("أهلاً بك يا مؤسس الكلان ⚡", "تم فتح لوحة التحكم للسيادة الكلية.");
+            } else {
+                let pass = prompt("💻 أدخل باسورد المؤسس أدم للوصول للوحة الهكر:");
+                if (pass === founderPassword) {
+                    myCurrentName = "adam1";
+                    localStorage.setItem('monster_my_name', "adam1");
+                    checkAndRevealHackerButton();
+                    window.switchSection(sectionId, element);
+                } else {
+                    alert("❌ باسورد المؤسس غير صحيح!");
+                }
+            }
+        };
+
+        window.toggleMobileSidebar = function() {
+            document.getElementById('appSidebar').classList.toggle('mobile-open');
+            document.getElementById('sidebarOverlay').classList.toggle('active');
+        };
+
+        window.toggleGlobalAppLock = async function() {
+            if (!checkAdminAuth()) return;
+            const lockRef = doc(db, "settings", "appLock");
+            const snap = await getDoc(lockRef);
+            let isLocked = snap.exists() ? snap.data().isLocked : false;
+            await setDoc(lockRef, { isLocked: !isLocked });
+            showFancyToast("حالة القفل", !isLocked ? "تم إغلاق التطبيق للصيانة!" : "تم فتح التطبيق للجميع.");
+        };
+
+        window.emergencyUnlockApp = function() {
+            if (prompt("أدخل باسورد المؤسس:") === founderPassword) {
+                document.getElementById('globalLockScreen').style.display = 'none';
+            }
+        };
+
+        function listenToGlobalLock() {
+            onSnapshot(doc(db, "settings", "appLock"), (snap) => {
+                if (snap.exists() && snap.data().isLocked) {
+                    if (!isFounder(myCurrentName)) document.getElementById('globalLockScreen').style.display = 'flex';
+                } else {
+                    document.getElementById('globalLockScreen').style.display = 'none';
+                }
+            });
+        }
+
+        function renderMemberCounts() {
+            let bCount = 0, lCount = 0, cCount = 0, tCount = cachedMembers.length;
+
+            cachedMembers.forEach((m) => {
+                if (m.rank === 'زعيم' || m.rank === 'المؤسس') bCount++;
+                if (m.rank === 'قائد') lCount++;
+                if (m.rank === 'نائب قائد') cCount++;
+            });
+
+            document.getElementById('bossCount').innerText = `${bCount} / ${maxBossesLimit}`;
+            document.getElementById('leaderCount').innerText = `${lCount} / ${maxLeadersLimit}`;
+            document.getElementById('coleaderCount').innerText = `${cCount} / ${maxColeadersLimit}`;
+            document.getElementById('totalCount').innerText = tCount;
+        }
+
+        function listenToMembers() {
+            onSnapshot(collection(db, "members"), (snapshot) => {
+                cachedMembers = [];
+                snapshot.forEach((docSnap) => {
+                    let m = docSnap.data();
+                    m.id = docSnap.id;
+                    cachedMembers.push(m);
+                });
+
+                renderMemberCounts();
+                renderMembersTable(cachedMembers);
+                renderLeadersTable(cachedMembers);
+            });
+        }
+
+        function renderMembersTable(members) {
+            const tbody = document.getElementById('membersTableBody');
+            if (!tbody) return;
+
+            if (members.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">لا يوجد أعضاء مسجلين حالياً.</td></tr>`;
+                return;
+            }
+
+            let html = '';
+            members.forEach((m) => {
+                const isFounderMember = isFounder(m.name);
+                let rankClass = 'member';
+                if (m.rank === 'المؤسس') rankClass = 'founder';
+                else if (m.rank === 'زعيم') rankClass = 'boss';
+                else if (m.rank === 'قائد') rankClass = 'leader';
+                else if (m.rank === 'نائب قائد') rankClass = 'coleader';
+
+                const statusBadge = m.isBanned ? `<span style="color: var(--danger-color); font-weight: 700;">محظور 🚫</span>` : `<span style="color: var(--success-color); font-weight: 700;">نشط 🟢</span>`;
+
+                html += `
+                    <tr>
+                        <td class="select-col" style="display: ${isBulkDeleteMode ? 'table-cell' : 'none'};">
+                            <input type="checkbox" class="member-select-chk" data-id="${m.id}" ${isFounderMember ? 'disabled' : ''}>
+                        </td>
+                        <td style="font-weight: 800; color: ${isFounderMember ? 'var(--founder-gold)' : 'var(--text-color)'};">
+                            ${m.name} ${isFounderMember ? '⚡ (المؤسس)' : ''}
+                        </td>
+                        <td><span class="rank-badge ${rankClass}">${m.rank}</span></td>
+                        <td style="color: var(--text-muted); font-size: 11px;">${m.date || 'سابق'}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="btn-action-edit" onclick="editMember('${m.id}')"><i class="fa-solid fa-pen"></i> تعديل</button>
+                                <button class="btn-action-ban" onclick="toggleBanMember('${m.id}')"><i class="fa-solid fa-ban"></i> ${m.isBanned ? 'فك' : 'حظر'}</button>
+                                <button class="btn-action-delete" onclick="deleteMember('${m.id}')"><i class="fa-solid fa-trash"></i> حذف</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function renderLeadersTable(members) {
+            const tbody = document.getElementById('leadersTableBody');
+            if (!tbody) return;
+            const leaders = members.filter(m => m.rank === 'المؤسس' || m.rank === 'زعيم' || m.rank === 'قائد' || m.rank === 'نائب قائد');
+            if (leaders.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">لا يوجد قادة أو زعماء.</td></tr>`;
+                return;
+            }
+            let html = '';
+            leaders.forEach((m) => {
+                let rankClass = m.rank === 'المؤسس' ? 'founder' : (m.rank === 'زعيم' ? 'boss' : (m.rank === 'قائد' ? 'leader' : 'coleader'));
+                html += `
+                    <tr>
+                        <td style="font-weight: 800;">${m.name}</td>
+                        <td><span class="rank-badge ${rankClass}">${m.rank}</span></td>
+                        <td style="color: var(--text-muted); font-size: 11px;">${m.date || 'سابق'}</td>
+                        <td><span style="color: var(--success-color); font-weight: 700;">نشط 🟢</span></td>
+                        <td><button class="btn-action-edit" onclick="editMember('${m.id}')"><i class="fa-solid fa-pen"></i> تعديل</button></td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        window.registerMember = async function(e) {
+            e.preventDefault();
+            const nameInput = document.getElementById('mName').value.trim();
+            const passwordInput = document.getElementById('mPassword').value.trim();
+            const rankSelect = document.getElementById('mRank').value;
+
+            if (!nameInput) {
+                alert("⚠️ يرجى أدخال اسم المستخدم!");
+                return;
+            }
+
+            if (rankSelect === 'عضو' && passwordInput !== '') {
+                alert("❌ لا يمكنك تعيين كلمة سر لرتبة عضو عادي! خانة كلمة السر مخصصة فقط للرتب القيادية.");
+                document.getElementById('mPassword').value = '';
+                return;
+            }
+
+            if ((rankSelect === 'زعيم' || rankSelect === 'قائد' || rankSelect === 'نائب قائد') && !passwordInput) {
+                alert("⚠️ يُشترط إدخال كلمة سر لحماية الحسابات القيادية (زعيم / قائد / نائب قائد)!");
+                return;
+            }
+
+            const isFounderTrigger = (nameInput.toLowerCase() === founderCodeName.toLowerCase()) && (passwordInput === founderPassword) && (rankSelect === "زعيم");
+
+            if (!isFounderTrigger) {
+                if (rankSelect === 'زعيم') {
+                    const currentBosses = cachedMembers.filter(m => m.rank === 'زعيم' || m.rank === 'المؤسس').length;
+                    if (currentBosses >= maxBossesLimit) {
+                        alert(`❌ لا يمكن اختيار رتبة (زعيم). تم الوصول للحد الأقصى المسموح به (${maxBossesLimit} زعماء)!`);
+                        return;
+                    }
+                } else if (rankSelect === 'قائد') {
+                    const currentLeaders = cachedMembers.filter(m => m.rank === 'قائد').length;
+                    if (currentLeaders >= maxLeadersLimit) {
+                        alert(`❌ لا يمكن اختيار رتبة (قائد). تم الوصول للحد الأقصى المسموح به (${maxLeadersLimit} قائد)!`);
+                        return;
+                    }
+                } else if (rankSelect === 'نائب قائد') {
+                    const currentColeaders = cachedMembers.filter(m => m.rank === 'نائب قائد').length;
+                    if (currentColeaders >= maxColeadersLimit) {
+                        alert(`❌ لا يمكن اختيار رتبة (نائب قائد). تم الوصول للحد الأقصى المسموح به (${maxColeadersLimit} نواب)!`);
+                        return;
+                    }
+                }
+            }
+
+            const existingMember = cachedMembers.find(m => m.name.toLowerCase() === nameInput.toLowerCase());
+
+            if (existingMember) {
+                if (existingMember.rank !== 'عضو' && existingMember.password !== passwordInput) {
+                    alert("❌ كلمة السر غير صحيحة لمطابقة هذا الحساب القيادي!");
+                    return;
+                }
+
+                myCurrentName = existingMember.name;
+                myDocId = existingMember.id;
+                localStorage.setItem('monster_my_name', myCurrentName);
+                localStorage.setItem('monster_my_doc_id', myDocId);
+                
+                if (isFounderTrigger) {
+                    await updateDoc(doc(db, "members", existingMember.id), { rank: "المؤسس" });
+                } else if (rankSelect !== 'keep_old' && rankSelect !== existingMember.rank) {
+                    await updateDoc(doc(db, "members", existingMember.id), { rank: rankSelect });
+                }
+
+                checkAndRevealHackerButton();
+                showFancyToast("تم تسجيلك بنجاح ✅", `مرحباً بعودتك يا ${myCurrentName}! تم الدخول على حسابك الموحد.`);
+                document.getElementById('mName').value = '';
+                document.getElementById('mPassword').value = '';
+            } else {
+                let finalRank = isFounderTrigger ? "المؤسس" : (rankSelect === 'keep_old' ? 'عضو' : rankSelect);
+
+                const docRef = await addDoc(collection(db, "members"), {
+                    name: nameInput,
+                    password: passwordInput,
+                    rank: finalRank,
+                    isBanned: false,
+                    date: new Date().toLocaleDateString('ar-EG')
+                });
+
+                myCurrentName = nameInput;
+                myDocId = docRef.id;
+                localStorage.setItem('monster_my_name', myCurrentName);
+                localStorage.setItem('monster_my_doc_id', myDocId);
+                checkAndRevealHackerButton();
+
+                document.getElementById('mName').value = '';
+                document.getElementById('mPassword').value = '';
+                
+                showFancyToast("تم تسجيلك بنجاح ✅", isFounderTrigger ? `تم تفعيل مهنة [ المؤسس ] لك يا أدم بنجاح!` : `أهلاً بك (${nameInput}) برتبة ${finalRank}.`);
+            }
+        };
+
+        window.hackerViewPasswords = function() {
+            let log = `<br>> === [ قائمة كلمات السر المسجلة بالأجهزة ] ===`;
+            cachedMembers.forEach((m, idx) => {
+                log += `<br>> ${idx + 1}. الاسم: (${m.name}) | الرتبة: (${m.rank}) | الباسورد: [ ${m.password || 'بدون باسورد'} ]`;
+            });
+            document.getElementById('hackerLogScreen').innerHTML += log;
+            showFancyToast("تم جلب كلمات السر 🔓", "تمت استعادة وبث جميع الباسوردات السحابية بنجاح.");
+        };
+
+        window.hackerGiveImmunityPrompt = async function() {
+            let targetName = prompt("🛡️ أدخل اسم العضو لمنحه الحصانة الكاملة:");
+            if (!targetName || !targetName.trim()) return;
+            const nameClean = targetName.trim();
+            if (!customVipWhitelist.some(v => v.toLowerCase() === nameClean.toLowerCase())) {
+                customVipWhitelist.push(nameClean);
+                await setDoc(doc(db, "settings", "vipList"), { whitelist: customVipWhitelist }, { merge: true });
+                document.getElementById('hackerLogScreen').innerHTML += `<br>> [SUCCESS] تم منح الحصانة المطلقة للعضو: ${nameClean}`;
+                showFancyToast("تمت الحصانة بنجاح ⚡", `العضو ${nameClean} أصبح محمياً ضد الطرد والحذف.`);
+            } else {
+                alert("⚠️ هذا العضو يمتلك حصانة مسبقاً!");
+            }
+        };
+
+        window.hackerQuickAccountGenerator = async function() {
+            let name = prompt("⚡ [صانع الحسابات السريع] - أدخل اسم الحساب الجديد:");
+            let pass = prompt("🔑 أدخل كلمة السر للحساب الجديد (إن وجد):");
+            let rank = prompt("👑 أدخل الرتبة (عضو / نائب قائد / قائد / زعيم):", "عضو");
+            if (!name) return;
+
+            await addDoc(collection(db, "members"), {
+                name: name.trim(),
+                password: pass ? pass.trim() : '',
+                rank: rank ? rank.trim() : 'عضو',
+                isBanned: false,
+                date: new Date().toLocaleDateString('ar-EG')
+            });
+            document.getElementById('hackerLogScreen').innerHTML += `<br>> [GENERATOR] تم توليد حساب جديد (${name}) برتبة (${rank})`;
+            showFancyToast("تم الإنشاء بنجاح ⚙️", `تم إنشاء حساب ${name} عبر صانع الحسابات السريع.`);
+        };
+
+        window.hackerWipeDatabase = async function() {
+            if (confirm("⚠️ تحذير المؤسس: هل أنت متأكد من تصفير ومسح جميع الأعضاء والشات للبدء من جديد؟")) {
+                const memSnap = await getDocs(collection(db, "members"));
+                for (let d of memSnap.docs) { await deleteDoc(doc(db, "members", d.id)); }
+                localStorage.clear();
+                alert("🧹 تم تصفير الكلان بالكامل.");
+                location.reload();
+            }
+        };
+
+        window.editMember = async function(id) {
+            if (!checkAdminAuth()) return;
+            const m = cachedMembers.find(item => item.id === id);
+            if (!m) return;
+            if (isFounder(m.name) && myCurrentName !== m.name) { alert("⚠️ لا يمكنك تعديل حساب المؤسس أدم!"); return; }
+            let newName = prompt("تعديل الاسم:", m.name);
+            let newRank = prompt("تعديل الرتبة:", m.rank);
+            if (newName !== null && newRank !== null) {
+                await updateDoc(doc(db, "members", id), { name: newName.trim(), rank: newRank.trim() });
+                showFancyToast("تعديل ناجح", "تم تحديث بيانات العضو.");
+            }
+        };
+
+        window.toggleBanMember = async function(id) {
+            if (!checkAdminAuth()) return;
+            const m = cachedMembers.find(item => item.id === id);
+            if (!m) return;
+            if (isFounder(m.name)) { alert("⚠️ لا يمكن حظر المؤسس أدم!"); return; }
+            await updateDoc(doc(db, "members", id), { isBanned: !m.isBanned });
+            showFancyToast("تحديث الحالة", "تم تعديل حالة الحظر.");
+        };
+
+        window.deleteMember = async function(id) {
+            if (!checkAdminAuth()) return;
+            const m = cachedMembers.find(item => item.id === id);
+            if (!m) return;
+            if (isFounder(m.name)) { alert("⚠️ لا يمكن حذف حساب المؤسس أدم!"); return; }
+            if (confirm(`حذف العضو (${m.name})؟`)) {
+                await deleteDoc(doc(db, "members", id));
+                showFancyToast("تم الحذف", "تم إزالة العضو بنجاح.");
+            }
+        };
+
+        window.triggerBulkDelete = async function() {
+            if (!checkAdminAuth()) return;
+            isBulkDeleteMode = !isBulkDeleteMode;
+            document.querySelectorAll('.select-col').forEach(col => col.style.display = isBulkDeleteMode ? 'table-cell' : 'none');
+            if (!isBulkDeleteMode) {
+                const selected = document.querySelectorAll('.member-select-chk:checked');
+                if (selected.length > 0 && confirm(`حذف ${selected.length} أعضاء محددين؟`)) {
+                    for (let chk of selected) { await deleteDoc(doc(db, "members", chk.getAttribute('data-id'))); }
+                    showFancyToast("تم الحذف الجماعي", "تم التنفيذ بنجاح.");
+                }
+            }
+        };
+
+        window.toggleSelectAll = function(master) {
+            document.querySelectorAll('.member-select-chk:not([disabled])').forEach(chk => chk.checked = master.checked);
+        };
+
+        function initChatRealtime() {
+            onSnapshot(query(collection(db, "clan_chat"), orderBy("timestamp", "asc")), (snapshot) => {
+                const container = document.getElementById('chatMessagesContainer');
+                if (!container) return;
+                if (snapshot.empty) {
+                    container.innerHTML = `<div style="text-align: center; color: var(--text-muted); margin: auto;">لا توجد رسائل في الشات بعد.</div>`;
+                    return;
+                }
+                let html = '';
+                snapshot.forEach((docSnap) => {
+                    const msg = docSnap.data();
+                    const isMy = msg.authorName === myCurrentName && myCurrentName !== '';
+                    const time = msg.timestamp ? new Date(msg.timestamp.toDate()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+                    
+                    html += `
+                        <div class="chat-message-item ${isMy ? 'my-message' : ''}">
+                            <i class="fa-solid fa-xmark chat-msg-delete-btn" title="حذف الرسالة" onclick="deleteChatMessage('${docSnap.id}')"></i>
+                            <div class="chat-msg-header"><span class="chat-msg-author">${msg.authorName || 'زائر'}</span><span>${time}</span></div>
+                            <div class="chat-msg-text">${escapeHtml(msg.text)}</div>
+                        </div>`;
+                });
+                container.innerHTML = html;
+                container.scrollTop = container.scrollHeight;
+            });
+        }
+
+        window.insertEmoji = function(emoji) {
+            const input = document.getElementById('chatInputMessage');
+            input.value += emoji;
+            input.focus();
+        };
+
+        window.deleteChatMessage = async function(msgId) {
+            if (checkAdminAuth()) {
+                await deleteDoc(doc(db, "clan_chat", msgId));
+                showFancyToast("تم الحذف", "تمت إزالة الرسالة بنجاح.");
+            }
+        };
+
+        window.handleChatKeyPress = function(e) { if (e.key === 'Enter') sendChatMessage(); };
+
+        window.sendChatMessage = async function() {
+            const input = document.getElementById('chatInputMessage');
+            const text = input.value.trim();
+            if (!text) return;
+            let author = myCurrentName || prompt("أدخل اسمك للمشاركة بالشات:") || "زائر";
+            myCurrentName = author;
+            localStorage.setItem('monster_my_name', author);
+            checkAndRevealHackerButton();
+
+            await addDoc(collection(db, "clan_chat"), { authorName: author, text: text, timestamp: new Date() });
+            input.value = '';
+        };
+
+        function listenToTournaments() {
+            onSnapshot(collection(db, "tournaments"), (snapshot) => {
+                const tbody = document.getElementById('tournamentsTableBody');
+                if (!tbody) return;
+                if (snapshot.empty) {
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">لا توجد بطولات.</td></tr>`;
+                    return;
+                }
+                let html = '';
+                snapshot.forEach((docSnap) => {
+                    let t = docSnap.data();
+                    html += `<tr><td style="font-weight: 800; color: var(--warning-color);">${t.name}</td><td>${t.time}</td><td style="color: var(--text-muted);">${t.by || 'الإدارة'}</td><td><button class="btn-action-delete" onclick="deleteTournament('${docSnap.id}')"><i class="fa-solid fa-trash"></i> حذف</button></td></tr>`;
+                });
+                tbody.innerHTML = html;
+            });
+        }
+
+        window.addTournament = async function(e) {
+            e.preventDefault();
+            if (!checkAdminAuth()) return;
+            const name = document.getElementById('tName').value.trim();
+            const time = document.getElementById('tTime').value.trim();
+            if (!name || !time) return;
+            await addDoc(collection(db, "tournaments"), { name: name, time: time, by: myCurrentName || 'الإدارة' });
+            document.getElementById('tName').value = '';
+            document.getElementById('tTime').value = '';
+            showFancyToast("تم النشر", "تمت إضافة البطولة بنجاح.");
+        };
+
+        window.deleteTournament = async function(id) {
+            if (!checkAdminAuth()) return;
+            await deleteDoc(doc(db, "tournaments", id));
+            showFancyToast("تم الحذف", "إزالة البطولة بنجاح.");
+        };
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        document.getElementById('searchInput')?.addEventListener('input', (e) => {
+            const q = e.target.value.toLowerCase();
+            const filtered = cachedMembers.filter(m => m.name.toLowerCase().includes(q) || m.rank.toLowerCase().includes(q));
+            renderMembersTable(filtered);
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            checkAndRevealHackerButton();
+            listenToLimits();
+            listenToGlobalLock();
+            listenToMembers();
+            listenToTournaments();
+            listenToSecretVipWhitelist();
+            initChatRealtime();
+        });
+    </script>
+</body>
+</html>
